@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend-app
+  template:
+    metadata:
+      labels:
+        app: frontend-app
+    spec:
+      containers:
+        - name: frontend
+          image: stvdn/frontend
+          envFrom:
+            #- configMapRef:
+             #   name: frontend-configmap
+            #- secretRef:
+            #    name: frontend-secret
