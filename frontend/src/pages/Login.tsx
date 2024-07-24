@@ -7,16 +7,16 @@ function Login() {
     const form = e.currentTarget
     const formData = new FormData(form)
     const formJson = Object.fromEntries(formData.entries());
+    const credentials = btoa(`${formJson.email}:${formJson.password}`);
     const headers = new Headers({
-      "Authorization": `Basic ${formJson.email}:${formJson.password}`
+      "Authorization": `Basic ${credentials}`,
+      "Access-Control-Allow-Origin": "*"
     })
     fetch("http://mp3converter.com/login", {
       method: "POST",
-      headers: headers,
-      mode: "no-cors"
+      headers: headers
     })
-    .then(res => res.json())
-    .then(data => console.log(data))
+    .then(res => console.log(res))
     .catch(error => console.log("Error", error))
   }
 

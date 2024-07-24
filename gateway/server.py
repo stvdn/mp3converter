@@ -1,5 +1,5 @@
 import os, gridfs, pika, json
-from flask import Flask, request, send_file
+from flask import Flask, request, send_file, make_response
 from flask_pymongo import PyMongo
 from auth import validate
 from auth_service import access
@@ -24,14 +24,18 @@ fs_mp3s = gridfs.GridFS(mongo_mp3.db)
 connection = pika.BlockingConnection(pika.ConnectionParameters("rabbitmq"))
 channel = connection.channel()
 
-@server.route("/login", methods=["POST"])
+@server.route("/login", methods=["POST", "OPTIONS"])
 def login():
-    print("login..")
+    if request.method == "OPTIONS":
+        response = make_response()
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        response.headers.add("Access-Control-Allow-Headers", "access-control-allow-origin,authorization")
+        return response
     token, err = access.login(request)
     if not err:
-        return token
+        return token, 200, {'Access-Control-Allow-Origin':'*'}
     else:
-        return err
+        return err[0], err[1], {'Access-Control-Allow-Origin':'*'}
 
 @server.route("/upload", methods=["POST"])
 def upload():
